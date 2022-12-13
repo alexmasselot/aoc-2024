@@ -26,7 +26,6 @@ if __name__ == '__main__':
     from_min = np.minimum(from_w, np.minimum(from_e, np.minimum(from_s, from_n)))
     print(np.greater(mat, from_min).sum())
 
-    print(mat)
     view_map = mat.copy()
     view_map.fill(1)
     for i in range(0,n):
