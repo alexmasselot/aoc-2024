@@ -1,46 +1,41 @@
-filename = 'input-a.txt'
-
-rank = {
-    'A': 0,
-    'B': 1,
-    'C': 2
-}
-
-code = {
-    'X': 'A',
-    'Y': 'B',
-    'Z': 'C',
-}
+from utils import read_input
 
 
-def score(a, b):
-    if a == b:
-        return 3
-    if (rank[a] == rank[b] + 1) or (a == 'A' and b == 'C'):
-        return 0
-    return 6
+def check_pair_invalid(x1, x2):
+    return x2 <= x1 or x2 > (x1 + 3)
+
+
+def check_increase(xs: list[int], allow_skip=0):
+    skipped = 0
+    x = xs[0]
+    for i, x1 in enumerate(xs[1:]):
+        if check_pair_invalid(x, x1):
+            if skipped >= allow_skip:
+                return False
+            skipped += 1
+            if i == 0:
+                if check_pair_invalid(xs[0], xs[2]):
+                    x = xs[1]
+            continue
+        x = x1
+    return True
+
+
+def check_decrease(xs: list[int], allow_skip=0):
+    xs = [*xs]
+    xs.reverse()
+    return check_increase(xs, allow_skip)
 
 
 if __name__ == '__main__':
-    with open(filename) as fd:
-        tot_score_1 = 0
-        tot_score_2 = 0
-        for l in fd.readlines():
-            [a, b] = l.strip().split(' ')
-            ba = code[b]
-            tot_score_1 += score(a, ba) + rank[ba] + 1
-
-            if b == 'X':
-                ba = (rank[a] - 1 + 3) % 3
-                tot_score_2 += 0
-            elif b == 'Y':
-                ba = rank[a]
-                tot_score_2 += 3
-            else:
-                tot_score_2 += 6
-                ba = (rank[a] + 1) % 3
-
-            tot_score_2 += ba + 1
-
-        print(tot_score_1)
-        print(tot_score_2)
+    lines = read_input('input-a.txt')
+    lines = [list(map(int, line.strip().split())) for line in lines]
+    n_1 = 0
+    n_2 = 0
+    for l in lines:
+        if check_decrease(l) or check_increase(l):
+            n_1 += 1
+        if check_decrease(l, 1) or check_increase(l, 1):
+            n_2 += 1
+    print(n_1)
+    print(n_2)
