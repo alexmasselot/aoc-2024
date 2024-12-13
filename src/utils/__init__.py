@@ -13,6 +13,10 @@ def read_input_blocks(filename: str, sep='\n\n'):
     return all.split(sep)
 
 
+def read_input_matrix_char(filename: str):
+    return [list(l) for l in read_input(filename)]
+
+
 def np_dense_matrix(filename: str):
     lines = read_input(filename)
     array = [
