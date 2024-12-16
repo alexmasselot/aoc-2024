@@ -25,3 +25,20 @@ def np_dense_matrix(filename: str):
     ]
 
     return np.asmatrix(array)
+
+
+def dim_matrix(m):
+    return len(m), len(m[0])
+
+
+def find_in_matrix(m, v):
+    for r, row in enumerate(m):
+        for c, x in enumerate(row):
+            if v == x:
+                return r, c
+    return None
+
+
+def fill_matrix(dim, v):
+    n_rows, n_cols = dim
+    return [[v for _ in range(n_cols)] for _ in range(n_rows)]
