@@ -19,7 +19,7 @@ class TestGrid(TestCase):
         self.grid = Grid(sample_0_grid)
 
     def test_constructor(self):
-        self.assertEqual(8, self.grid.size())
+        self.assertEqual((8,8), self.grid.dim())
         self.assertEqual((2, 2), self.grid.bot)
 
     def test_str(self):
@@ -39,10 +39,10 @@ class TestGrid(TestCase):
         self.assertEqual((2, 1), self.grid.neigh_pos((2, 2), 3))
 
     def test_is_free_t(self):
-        self.assertTrue(self.grid.is_free((2, 2), 0))
+        self.assertTrue(self.grid.is_free_in((2, 2), 0))
 
     def test_is_free_f(self):
-        self.assertFalse(self.grid.is_free((2, 2), 3))
+        self.assertFalse(self.grid.is_free_in((2, 2), 3))
 
     def test_move_0_free(self):
         grid = Grid('''
