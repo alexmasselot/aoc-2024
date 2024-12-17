@@ -75,7 +75,6 @@ class Computer:
 
         idx = 0
         while idx < len(self.instructions):
-            print(f'idx={idx}')
             idx = self.operate(idx)
             # print(idx)
             if output_match is not None and self.out is not None:
