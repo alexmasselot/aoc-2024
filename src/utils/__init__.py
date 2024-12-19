@@ -2,8 +2,7 @@ import numpy as np
 
 
 def read_input(filename: str):
-    with open(filename) as fd:
-        return [l.replace('\n', '') for l in fd.readlines()]
+    return [*map(str.strip, open(filename).readlines())]
 
 
 def read_input_blocks(filename: str, sep='\n\n'):
