@@ -42,3 +42,7 @@ def find_in_matrix(m, v):
 def fill_matrix(dim, v):
     n_rows, n_cols = dim
     return [[v for _ in range(n_cols)] for _ in range(n_rows)]
+
+
+def print_matrix(m):
+    print('\n'.join(''.join(r) for r in m))
