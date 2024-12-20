@@ -43,5 +43,12 @@ def fill_matrix(dim, v):
     return [[v for _ in range(n_cols)] for _ in range(n_rows)]
 
 
-def print_matrix(m):
+def print_grid(m):
     print('\n'.join(''.join(r) for r in m))
+
+
+def print_matrix(m, fmt=None):
+    if fmt is None:
+        print('\n'.join(' '.join(r) for r in m))
+    else:
+        print('\n'.join(' '.join([fmt(x) for x in r]) for r in m))

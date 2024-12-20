@@ -1,4 +1,4 @@
-from utils import read_input, fill_matrix, dim_matrix, print_matrix
+from utils import read_input, fill_matrix, dim_matrix, print_grid
 
 dirs = [
     (-1, 0),
