@@ -66,17 +66,21 @@ if __name__ == '__main__':
     longest_short, dist_start = walk(grid, p_start)
 
     savings = [0 for _ in range(longest_short)]
+    d_max = 20
     for r in range(n):
         for c in range(n):
-            for d in range(4):
-                p_n = r + 2 * dirs[d][0], c + 2 * dirs[d][1]
-                if 0 <= p_n[0] < n and 0 <= p_n[1] < n and grid[p_n[0]][p_n[1]] != '#' and grid[r][c] != '#':
-                    shortcut = dist_start[p_n[0]][p_n[1]] - dist_start[r][c]
-                    if shortcut > 0:
-                        savings[shortcut - 2] += 1
+            for r_0 in range(-d_max, d_max + 1):
+                v = d_max - abs(r_0)
+                for r_1 in range(-v, v + 1):
+                    p_0 = r + r_0
+                    p_1 = c + r_1
+                    if 0 <= p_0 < n and 0 <= p_1 < n and grid[p_0][p_1] != '#' and grid[r][c] != '#':
+                        shortcut = dist_start[p_0][p_1] - dist_start[r][c]
+                        if shortcut > 0:
+                            savings[shortcut - abs(r_0) - abs(r_1)] += 1
 
     for i, s in enumerate(savings):
         if s > 0:
             print(f'{i}\t{s}')
-    print(sum([s for i, s in enumerate(savings) if i>=100]))
+    print(sum([s for i, s in enumerate(savings) if i >= 100]))
     # lines = read_input('input-a.txt')
