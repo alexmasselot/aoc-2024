@@ -66,6 +66,5 @@ if __name__ == '__main__':
         connections[c2].add(c1)
     # n_c, cs = max([largest_cluster(cs, connections) for c, cs in {'ta': connections['ta']}.items()], key=lambda a: a[0])
     n_c, cs = max([largest_cluster(cs, connections) for c, cs in connections.items()], key=lambda a: a[0])
-    print(cs)
     cs.sort()
     print(','.join(cs))
