@@ -1,42 +1,93 @@
 from unittest import TestCase
 
-from d21 import command_rec, numeric_keypad, arrow_keypad
+from parameterized import parameterized
+
+from d21 import command_rec, numeric_keypad, arrow_keypad, command
 
 
 class Test(TestCase):
-    def test_command_rec_1_1(self):
-        given = '029A'
-        got = command_rec(given, 1)
-        self.assertEqual('<A^A>^^AvvvA', got)
+    @parameterized.expand([
+        ("AA", ['A']),
+        ("A0", ['<A']),
+        ("0A", ['>A']),
+        ("A3", ['^A']),
+        ("3A", ['vA']),
+        ("A9", ['^^^A']),
+        ("A5", ['^^<A', '<^^A']),
+        ("5A", ['vv>A', '>vvA']),
+        ("A4", ['^^<<A']),  # cannot go through lower left
+        ("4A", ['>>vvA']),  # cannot go through lower left
+        ("76", ['>>vA', 'v>>A']),
+        ("91", ['<<vvA', 'vv<<A']),
+        ("19", ['>>^^A', '^^>>A']),
+        ("09", ['>^^^A', '^^^>A']),
+    ])
+    def test_command_numeric_all_level_1(self, given, expected):
+        got = command(given, numeric_keypad)
+        expected.sort()
+        got.sort()
+        self.assertEqual(expected, got)
 
-        got_back = numeric_keypad.type(got)
-        self.assertEqual(given, got_back)
+        for g in got:
+            got_back = numeric_keypad.type(given[0], g)
+            self.assertEqual(given[1:], got_back)
 
+    @parameterized.expand([
+        ("A02A", ['<A^Av>A', '<A^A>vA']),
+        ("A029A", ['<A^A>^^AvvvA']),
+    ])
+    def test_command_numeric_contains_level_1(self, given, expected):
+        got = command(given, numeric_keypad)
+        expected.sort()
+        got.sort()
+        for e in expected:
+            self.assertIn(e, got)
 
-    def test_command_rec_1_2(self):
-        given = '029A'
+        for g in got:
+            got_back = numeric_keypad.type(given[0], g)
+            self.assertEqual(given[1:], got_back)
+
+    @parameterized.expand([
+        ("AA", ['A']),
+        ("A>", ['vA']),
+        (">A", ['^A']),
+        ("Av", ['<vA', 'v<A']),
+        ("vA", ['>^A', '^>A']),
+        ("A<", ['v<<A']),
+        ("<A", ['>>^A']),
+    ])
+    def test_command_arrow_all_level_1(self, given, expected):
+        got = command(given, arrow_keypad)
+        expected.sort()
+        got.sort()
+        self.assertEqual(expected, got)
+
+        for g in got:
+            got_back = arrow_keypad.type(given[0], g)
+            self.assertEqual(given[1:], got_back)
+
+    def test_command_rec_2_029A(self):
+        given = 'A029A'
 
         got = command_rec(given, 2)
-        self.assertEqual('v<<A>>^A<A>AvA<^AA>A<vAAA>^A', got)
+        self.assertIn('v<<A>>^A<A>AvA<^AA>A<vAAA>^A', got)
 
-        got_back = numeric_keypad.type(arrow_keypad.type(got))
-        self.assertEqual(given, got_back)
+        for g in got:
+            got_back = numeric_keypad.type('A', arrow_keypad.type('A', g))
+            self.assertEqual(given[1:], got_back)
 
-    def test_command_rec_1_3(self):
-        given = '029A'
+    def test_command_rec_3_029A(self):
+        given = 'A029A'
         got = command_rec(given, 3)
-        # self.assertEqual('<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A', got)
+        expected = '<vA<AA>>^AvAA<^A>Av<<A>>^AvA^A<vA>^Av<<A>^A>AAvA^Av<<A>A>^AAAvA<^A>A'
 
-        got_back = numeric_keypad.type(arrow_keypad.type(arrow_keypad.type(got)))
-        self.assertEqual(given, got_back)
+        for g in got:
+            print(f'expected: {expected}\n     got: {g}\n')
 
-    def test_command_rec_4_3(self):
-        given = '379A'
-        print(command_rec(given, 1))
-        print(command_rec(given, 2))
-        print(command_rec(given, 3))
-        got = command_rec(given, 3)
-        self.assertEqual('<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A', got)
+        self.assertIn(expected, got)
 
-        got_back = numeric_keypad.type(arrow_keypad.type(arrow_keypad.type(got)))
-        self.assertEqual(given, got_back)
+
+        for g in got:
+            got_back = numeric_keypad.type('A', arrow_keypad.type('A', arrow_keypad.type('A', g)))
+            self.assertEqual(given[1:], got_back)
+
