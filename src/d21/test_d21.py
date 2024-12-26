@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from d21 import command_rec, numeric_keypad, arrow_keypad, command
+from d21 import command_rec, numeric_keypad, arrow_keypad, command, shortest_seq
 
 
 class Test(TestCase):
@@ -81,13 +81,19 @@ class Test(TestCase):
         got = command_rec(given, 3)
         expected = '<vA<AA>>^AvAA<^A>Av<<A>>^AvA^A<vA>^Av<<A>^A>AAvA^Av<<A>A>^AAAvA<^A>A'
 
-        for g in got:
-            print(f'expected: {expected}\n     got: {g}\n')
-
         self.assertIn(expected, got)
-
 
         for g in got:
             got_back = numeric_keypad.type('A', arrow_keypad.type('A', arrow_keypad.type('A', g)))
             self.assertEqual(given[1:], got_back)
 
+    @parameterized.expand([
+        ("029A", 68),
+        ("980A", 60),
+        ("179A", 68),
+        ("456A", 64),
+        ("379A", 64),
+    ])
+    def test_shortest_2(self, given, expected):
+        got = shortest_seq(given, 2)
+        self.assertEqual(expected, got)

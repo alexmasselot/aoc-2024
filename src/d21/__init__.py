@@ -135,7 +135,21 @@ def command_rec(target: str, level: int = 3):
     l2 = list(chain(*[command('A' + l, arrow_keypad) for l in l1]))
     if level == 2:
         return l2
-    return list(chain(*[command('A' + l, arrow_keypad) for l in l2]))
+    l3 = list(chain(*[command('A' + l, arrow_keypad) for l in l2]))
+    return l3
+
+def shortest_arrow_seq(target: str, level:int):
+    def fhandler(ts: str, level:int):
+        if level ==0:
+            return len(ts)
+        next_seqs = command('A' + ts, arrow_keypad)
+        return min(shortest_arrow_seq(s, level -1) for s in next_seqs)
+    return fhandler(target, level)
+
+def shortest_seq(target: str, level:int):
+    numeric_seq = command('A' + target, numeric_keypad)
+    ml = min(shortest_arrow_seq(t,level) for t in numeric_seq)
+    return ml
 
 
 numeric_keypad = Keypad(LAYOUT_NUMERIC, True)
@@ -147,8 +161,8 @@ if __name__ == '__main__':
     tot_1 = 0
     for line in read_input('input.txt'):
         print(f'----------------------------')
-        l3 = command_rec('A' + line, 3)
-        ml = min(len(l) for l in l3)
+
+        ml = shortest_seq(line, 2)
         print(f'''{line}: {ml} {int(line.replace('A', ''))}''')
         tot_1 += ml * int(line.replace('A', ''))
 
